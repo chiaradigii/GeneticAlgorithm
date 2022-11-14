@@ -41,14 +41,10 @@ class Population:
       self.candidate_list = mutated_population
 
 
-
-
     def get_max_fitnesse(self):
 
       return self.best_candidates()[0]
 
-
-      
     def selection(self):
       """ the candidates' probability to be selected depends on its'
       fitnesse value  """
