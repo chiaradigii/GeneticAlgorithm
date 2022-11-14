@@ -29,11 +29,8 @@ class Population:
 
     def best_candidates(self):
       """function returns a candidate list ordered by its fitness value"""
-
       for dna in self.candidate_list:
         dna.get_fitnesse()
-      
-      
       return sorted(self.candidate_list,key=attrgetter('fitnesse'), reverse=True)  ######################
         
     def mutate_population(self, mutation_rate):
@@ -139,6 +136,8 @@ class Population:
         
 
 class Candidate:
+  """class for a candidate (solution). For this solution, a candidate represents an specific route, 
+      it goes through all locations only once and it must visit all of them"""
   route = []
   fitnesse= 0.0
 
@@ -184,31 +183,37 @@ class Candidate:
       return self.fitnesse
   
   def crossover(self, partner):
+    """Function crossover. It takes the genes from two parents to create a child
+       Basicaly, the function takes a piece of one solution, and another one from the other solution in order to mix both in the child
+    """
+
+    #we randomly decide what portion of the child will take the adn of the 'mom' 
+    #the other portion left will be filled with the 'dad' adn
     adn1 = int(random.random() * len(self.route))
     adn2 = int(random.random() * len(self.route))
     
     startGene = min(adn1, adn2)
     endGene = max(adn1, adn2)
     mom = []
-    for i in range(startGene, endGene):
+    for i in range(startGene, endGene): 
         mom.append(self.route[i])
         
     dad = [item for item in partner.route if item not in mom]
-    child = Candidate(mom + dad)
+    child = Candidate(mom + dad) #new solution produeced by both parents
 
     return child
     
   def mutate(self,mutationRate):
-    for i in range(len(self.route)): #recorro las casas y si toca intercambiarintercambia
-      if(random.random() < mutationRate): #queremos que el mutationRate sea bajo para que sea baja la probabilidad de mutar
-          index_change = int(random.random() * len(self.route)) #aleatoriamente agarra la casa por la que va a intercambiarse
-          # ejemplo:
+    for i in range(len(self.route)): #it loops locations and randomply decide yf the solution will mutate or not (mutate means exchangen the order of two locations in the route)
+      if(random.random() < mutationRate): #in general, we want a small mutationRate in order to have low probability of mutating
+          index_change = int(random.random() * len(self.route)) #randomply it takes a location in the route and exchange its place in the list (changing indexes)
+          # example:
           #>>> camino = [1,2,3,4,5,6,7,8]
           #>>> int(random.random() * len(camino)) 
           # 6
           #>>> int(random.random() * len(camino))
           # 4
-          location1 = self.route[i] #intercambio las casas
+          location1 = self.route[i] #exchange 
           location2 = self.route[index_change]
           self.route[i] = location2
           self.route[index_change] = location1
