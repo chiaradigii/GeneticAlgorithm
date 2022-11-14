@@ -247,25 +247,78 @@ def plot_route(route):
 
   plt.show()
 
+def plot_best_routes(best_candidates):
+      coordinates_list = []
+
+      plt.ion()
 
 
-def geneticAlgorithm(routes):
+      fig, ax = plt.subplots(figsize=(22, 12))      
+      img = plt.imread('mapa.png')
+
+
+
+      for dna in best_candidates:
+        routes = []
+        coordinates_list = []
+        plt.draw()
+        plt.cla()
+
+        
+        for location in dna.route:
+          coordinates_list.append(location.coordinates)
+       
+        routes = np.array(coordinates_list)  
+        # create an array with coordinates and not location names which is what is needed to plot it
+
+        x,y = routes.T
+
+        sns.scatterplot(x=x,y=y,ax=ax,marker='x',color='red',s=200)
+        # plot locations with an 'x' marker
+        plt.xlim(0, 1000)
+        plt.ylim(0, 1000)
+
+        ax.xaxis.set_visible(False)
+        ax.yaxis.set_visible(False)
+
+        ax.imshow(img, extent=[0, 1000, 0, 1000], aspect='auto')
+        plt.draw()
+
+        
+
+        plt.plot(x,y,linestyle='dotted', color='black')
+        
+        # plot lines between locations to visualize routes
+        # separate x and y coordinates
+
+
+        fig.canvas.draw_idle()
+        plt.pause(0.01)
+
+      plt.waitforbuttonpress()
+
+
+def geneticAlgorithm(routes, max_generations, population_size, mutation_rate):
+  generations = []
+
   for r in routes:
     list.append(Location(r['Coordinates'][0],r["Coordinates"][1],r['Name']))
 
-  population = Population(1000,list)
+  population = Population(population_size,list)
 
 
-  for i in range(5000):
+  for i in range(max_generations):
     print(population.get_max_fitnesse().fitnesse)
-    if(population.get_max_fitnesse().fitnesse) < 0.00052:
+    if(population.get_max_fitnesse().fitnesse) < 0.00053:
       population.selection()
-      population.mutate_population(0.05)
+      population.mutate_population(mutation_rate)
+
+      generations.append(population.get_max_fitnesse())
     else:
       break
 
 
-  plot_route(population.get_max_fitnesse().route)
+  plot_best_routes(generations)
 
 routes = [
     {"Name": 'Abiyán', "Coordinates": [200,740]}, 
@@ -281,4 +334,4 @@ routes = [
 
 list =[]
 
-geneticAlgorithm(routes)
+geneticAlgorithm(routes, 500, 4000, 0.01)
