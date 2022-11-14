@@ -47,12 +47,9 @@ class Population:
 
 
     def get_max_fitnesse(self):
-      fitnesse_nums = []
-      for dna in self.candidate_list: # iterate over the dna elements
-        fitnesse_nums.append(dna.get_fitnesse()) #append to the fitnesse value of that dna 
-      
-      return max(fitnesse_nums) # return the maximum value from the list of fitnesse values recently created
-      
+
+      return self.best_candidates()[0]
+
 
       
     def selection(self):
@@ -251,6 +248,25 @@ def plot_route(route):
   plt.show()
 
 
+
+def geneticAlgorithm(routes):
+  for r in routes:
+    list.append(Location(r['Coordinates'][0],r["Coordinates"][1],r['Name']))
+
+  population = Population(1000,list)
+
+
+  for i in range(5000):
+    print(population.get_max_fitnesse().fitnesse)
+    if(population.get_max_fitnesse().fitnesse) < 0.00052:
+      population.selection()
+      population.mutate_population(0.05)
+    else:
+      break
+
+
+  plot_route(population.get_max_fitnesse().route)
+
 routes = [
     {"Name": 'Abiyán', "Coordinates": [200,740]}, 
     {"Name": "Niger", "Coordinates": [320,950]},
@@ -265,17 +281,4 @@ routes = [
 
 list =[]
 
-for r in routes:
-  list.append(Location(r['Coordinates'][0],r["Coordinates"][1],r['Name']))
-
-population = Population(200,list)
-
-
-for i in range(500):
-  print(population.get_max_fitnesse())
-  population.selection()
-  population.mutate_population(0.05)
-
-print(population.plot_route())
-
-
+geneticAlgorithm(routes)
